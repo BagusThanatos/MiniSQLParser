@@ -6,17 +6,5 @@ Bagus Nugroho Budi Nurtomo 1103110060
 Genta Wibi Oktavian
 Haekal Wiralegawa
 
+Harap baca Rules.txt
 =============
-RULES!! (Must read!)
-
-Harap dibaca!!
-Rule ngoding buat tubes Tekom:
-1. Penamaan class, fungsi, dan variabel mengikuti dulu yang digunakan pas praktikum PBO. Nama HARUS representatif.
-2. Penggunaan {} :
-	if/while/for {
-		//isi kode..
-	}
-3. untuk kondisional atau pengulangan yang hanya butuh satu baris harus ditulis:
-	if/while/for //kode ;
-	jangan menggunakan {}.
-4. untuk setiap class dan fungsi yang dibuat, harus diberi comment yang berisi kegunaan class dan fungsi tersebut. Untuk fungsi, jabarkan apa yang akan di-return.
