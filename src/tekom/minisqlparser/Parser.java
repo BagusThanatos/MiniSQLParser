@@ -15,8 +15,8 @@ public class Parser {
     /*
     Class untuk melakukan parsing terhadap inputan yang diberikan
     */
-    final static ArrayList<String> lexicalName= new ArrayList();
-    final static ArrayList<Integer> lexicalCode= new ArrayList();
+    private final static ArrayList<String> lexicalName= new ArrayList();
+    private final static ArrayList<Integer> lexicalCode= new ArrayList();
     static {
         lexicalName.add("SELECT");
         lexicalName.add("FROM");
@@ -29,16 +29,16 @@ public class Parser {
         for (int i=1;i<=8;i++) lexicalCode.add(i);
     }
     
-    final static int UNIDENTIFIED=0;
-    final static int SELECT=1;
-    final static int FROM=2;
-    final static int TABLE=3;
-    final static int PERIOD=4;
-    final static int COMMA=5;
-    final static int STAR=6;
-    final static int AND=7;
-    final static int OR=8;
-    final static int VARIABLE=9;
+    private final static int UNIDENTIFIED=0;
+    private final static int SELECT=1;
+    private final static int FROM=2;
+    private final static int TABLE=3;
+    private final static int PERIOD=4;
+    private final static int COMMA=5;
+    private final static int STAR=6;
+    private final static int AND=7;
+    private final static int OR=8;
+    private final static int VARIABLE=9;
     
     public static ArrayList<Integer> parseSQL(String sql){
         /*
