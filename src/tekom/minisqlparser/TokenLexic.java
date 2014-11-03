@@ -17,19 +17,16 @@ public class TokenLexic {
     private String string;
     private String value;
     
-    public final static String KEYWORD="Keyword";
-    public final static String VARIABLE="Variable";
-    public final static String CONSTANT="Constant";
-    public final static String BOOLEAN_OPERATOR="Boolean Opetarot";
-    public final static String LOGIC_OPERATOR="Logic Operator";
-    public final static String SET_OPERATOR="Set Operator";
-    
     public TokenLexic(int tc, String s, String v){
         this.tokenCode=tc;
-        this.string=s;
+        if (tc<=Parser.KEYWORDS) this.string="Keyword";
+        else if(tc<=Parser.BOOLEANS) this.string="Boolean Operator";
+        else if(tc<=Parser.LOGIC_OPERATORS) this.string="Logic Operator";
+        else if (tc<=Parser.SET_OPERATOR) this.string="Set Operator";
+        else this.string=s;
         this.value=v;
     }
-    
+
     public int getTokenCode(){
         return this.tokenCode;
     }
