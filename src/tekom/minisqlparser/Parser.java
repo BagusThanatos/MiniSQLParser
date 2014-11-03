@@ -6,7 +6,8 @@
 package tekom.minisqlparser;
 
 import java.util.ArrayList;
-
+import java.util.Stack;
+import java.util.StringTokenizer;
 /**
  *
  * @author BagusThanatos
@@ -15,31 +16,36 @@ public class Parser {
     /*
     Class untuk melakukan parsing terhadap inputan yang diberikan
     */
+    private static Stack<String> s = new Stack();
     private final static ArrayList<String> lexicalName= new ArrayList();
     private final static ArrayList<Integer> lexicalCode= new ArrayList();
     static {
         lexicalName.add("SELECT");
+        lexicalName.add("*");
+        lexicalName.add("WHERE");
         lexicalName.add("FROM");
-        lexicalName.add("TABLE");
+        lexicalName.add("(");
+        lexicalName.add(")");
         lexicalName.add(".");
         lexicalName.add(",");
-        lexicalName.add("*");
+        lexicalName.add(";");
         lexicalName.add("AND");
         lexicalName.add("OR");
-        for (int i=1;i<=8;i++) lexicalCode.add(i);
+        lexicalName.add("NOT");
+        lexicalName.add(">=");
+        lexicalName.add("=");
+        lexicalName.add("<=");
+        lexicalName.add("<");
+        lexicalName.add(">");
+        lexicalName.add("LIKE");
+        lexicalName.add("UNION");
+        lexicalName.add("JOIN");
+        for (int i=1;i<=20;i++) lexicalCode.add(i);
     }
     
     private final static int UNIDENTIFIED=0;
-    private final static int SELECT=1;
-    private final static int FROM=2;
-    private final static int TABLE=3;
-    private final static int PERIOD=4;
-    private final static int COMMA=5;
-    private final static int STAR=6;
-    private final static int AND=7;
-    private final static int OR=8;
-    private final static int VARIABLE=9;
-    
+    private final static int VARIABLE=21;
+    private final static int CONSTANT=22;
     public static ArrayList<Integer> parseSQL(String sql){
         /*
         akan mengembalikan bentuk berupa kode lexical dari inputan String sql yang ada
@@ -59,6 +65,39 @@ public class Parser {
             else result.add(VARIABLE);
             System.out.println(substring);
         }
+        return result;
+    }
+    public static ArrayList<TokenLexic> parseSQL2(String sql){
+        /*
+        memiliki fungsi yang sama dengan fungsi parseSQL, hanya saja menggunakan StringTokenizer
+        */
+        boolean logical=false;
+        String logicalString="";
+        ArrayList<TokenLexic> result = new ArrayList();
+        String temp;
+        StringTokenizer st= new StringTokenizer(sql,"*,.<>=(); ",true);
+        while(st.hasMoreTokens()){
+            temp=st.nextToken();
+            if (!temp.equals(" ")){
+                if (lexicalName.contains(temp.toUpperCase())) result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(temp.toUpperCase())),temp,temp));
+                else if (temp.matches("^[0-9]+$") || temp.contains("\"") || temp.contains("\'")) result.add(new TokenLexic(CONSTANT,TokenLexic.CONSTANT,temp));
+                else if (temp.equals("=") || temp.equals(">")|| temp.equals("<")) {
+                    if (logical){
+                        logical=false;
+                        result.remove(result.size()-1);
+                        result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(temp.toUpperCase())),temp,temp));
+                    }
+                    else {
+                        logical=true;
+                        logicalString=temp;
+                    }
+                    continue;
+                }
+                else result.add(new TokenLexic(VARIABLE,temp, temp));
+                if (logical) logical=false;
+            }
+        }
+        
         return result;
     }
     public static ArrayList<Integer> parseLexical(String l){

@@ -17,11 +17,11 @@ public class TekomMiniSQLParser {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        String a="select * from bagus.tab,aku.tab";
-        ArrayList<Integer> r= Parser.parseSQL(a);
-        ArrayList<Integer> r2=Parser.parseLexical(" 2  3    5   7");
-        System.out.println(r);
-        System.out.println(r2);
+        String a="SELECT * FROM tab_mhs WHERE tab_mhs.nim = “110399999”;";
+        
+        Parser.parseSQL2(a).stream().forEach((l) -> {
+            System.out.println(l.getValue()+" | "+l.getName()+" | "+l.getTokenCode());
+        });
     }
     
 }

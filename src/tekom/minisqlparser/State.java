@@ -12,9 +12,9 @@ import java.util.ArrayList;
  * @author BagusThanatos
  */
 public class State {
-    private String stateName;
-    private boolean acceptedState;
-    private ArrayList<NextState> nextStates;
+    final private String stateName;
+    final private boolean acceptedState;
+    final private ArrayList<NextState> nextStates;
     
     
     public State(String n, boolean acc){
@@ -32,7 +32,7 @@ public class State {
     }
     
     public void insertNextState(State s,int input){
-        this.nextStates.add(new NextState(s, input));
+        //this.nextStates.add(new NextState(s, input));
     }
     
     public boolean getStatus(){
