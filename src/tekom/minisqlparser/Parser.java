@@ -16,36 +16,40 @@ public class Parser {
     /*
     Class untuk melakukan parsing terhadap inputan yang diberikan
     */
-    private static Stack<String> s = new Stack();
+    private final static Stack<String> s = new Stack();
     private final static ArrayList<String> lexicalName= new ArrayList();
     private final static ArrayList<Integer> lexicalCode= new ArrayList();
     static {
-        lexicalName.add("SELECT");
-        lexicalName.add("*");
-        lexicalName.add("WHERE");
-        lexicalName.add("FROM");
-        lexicalName.add("(");
-        lexicalName.add(")");
-        lexicalName.add(".");
-        lexicalName.add(",");
-        lexicalName.add(";");
-        lexicalName.add("AND");
-        lexicalName.add("OR");
-        lexicalName.add("NOT");
-        lexicalName.add(">=");
-        lexicalName.add("=");
-        lexicalName.add("<=");
-        lexicalName.add("<");
-        lexicalName.add(">");
-        lexicalName.add("LIKE");
-        lexicalName.add("UNION");
-        lexicalName.add("JOIN");
-        for (int i=1;i<=20;i++) lexicalCode.add(i);
+        lexicalName.add("SELECT");  //1
+        lexicalName.add("*");       //2
+        lexicalName.add("WHERE");   //3
+        lexicalName.add("FROM");    //4
+        lexicalName.add("(");       //5
+        lexicalName.add(")");       //6
+        lexicalName.add(".");       //7
+        lexicalName.add(",");       //8
+        lexicalName.add(";");       //8
+        lexicalName.add("AND");     //9
+        lexicalName.add("OR");      //10
+        lexicalName.add("NOT");     //11
+        lexicalName.add(">=");      //12
+        lexicalName.add("=");       //13
+        lexicalName.add("<=");      //14
+        lexicalName.add("<");       //15
+        lexicalName.add(">");       //16
+        lexicalName.add("LIKE");    //17
+        lexicalName.add("UNION");   //18
+        lexicalName.add("JOIN");    //19
+        for (int i=1;i<=19;i++) lexicalCode.add(i);
     }
     
     private final static int UNIDENTIFIED=0;
-    private final static int VARIABLE=21;
-    private final static int CONSTANT=22;
+    public final static int KEYWORDS=8;
+    public final static int BOOLEANS=11;
+    public final static int LOGIC_OPERATORS=17;
+    public final static int SET_OPERATOR=19;
+    public final static int VARIABLE=21;
+    public final static int CONSTANT=22;
     public static ArrayList<Integer> parseSQL(String sql){
         /*
         akan mengembalikan bentuk berupa kode lexical dari inputan String sql yang ada
@@ -79,13 +83,15 @@ public class Parser {
         while(st.hasMoreTokens()){
             temp=st.nextToken();
             if (!temp.equals(" ")){
-                if (lexicalName.contains(temp.toUpperCase())) result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(temp.toUpperCase())),temp,temp));
-                else if (temp.matches("^[0-9]+$") || temp.contains("\"") || temp.contains("\'")) result.add(new TokenLexic(CONSTANT,TokenLexic.CONSTANT,temp));
+                if (lexicalName.contains(temp.toUpperCase())) 
+                    result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(temp.toUpperCase())),"",temp));
+                else if (temp.matches("^[0-9]+$") || temp.contains("\"") || temp.contains("\'") || temp.contains("“")) 
+                    result.add(new TokenLexic(CONSTANT,"Constant",temp));
                 else if (temp.equals("=") || temp.equals(">")|| temp.equals("<")) {
                     if (logical){
                         logical=false;
                         result.remove(result.size()-1);
-                        result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(temp.toUpperCase())),temp,temp));
+                        result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(temp.toUpperCase())),"",temp));
                     }
                     else {
                         logical=true;
@@ -93,7 +99,7 @@ public class Parser {
                     }
                     continue;
                 }
-                else result.add(new TokenLexic(VARIABLE,temp, temp));
+                else result.add(new TokenLexic(VARIABLE, "Variable" , temp));
                 if (logical) logical=false;
             }
         }
@@ -107,6 +113,10 @@ public class Parser {
         */
         
         ArrayList result=new ArrayList();
+        StringTokenizer st = new StringTokenizer(l);
+        
+        while (st.hasMoreTokens()) result.add(st.nextToken());
+        /*
         while(!l.isEmpty()){
             System.out.println(l);
             l=l.trim();
@@ -115,6 +125,7 @@ public class Parser {
             if (l.contains(" ")) l=l.substring(l.indexOf(" ")+1);
             else l="";
         }
+        */
         return result;
     }
     public static int nextSymbol(String sql){
