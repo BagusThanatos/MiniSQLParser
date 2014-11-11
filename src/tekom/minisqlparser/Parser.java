@@ -77,6 +77,8 @@ public class Parser {
         */
         boolean logical=false;
         boolean stringWithSpace=false;
+        boolean realNumber=false;
+        String stringRealNumber="";
         String stringWithSpaceTemp="";
         String logicalString="";
         ArrayList<TokenLexic> result = new ArrayList();
@@ -102,8 +104,26 @@ public class Parser {
                     stringWithSpace =true;
                     stringWithSpaceTemp=temp;
                 }
-                else if (temp.matches("^[0-9]+,[0-9]+$") || temp.contains("\"") || temp.contains("\'") || temp.contains("“")) 
+                /*
+                else if (temp.contains("\"") || temp.contains("\'") || temp.contains("“")) 
                     result.add(new TokenLexic(CONSTANT,"Constant",temp));
+                */
+                else if (temp.matches("^[0-9]+$")) {
+                    if (realNumber){
+                        result.add(new TokenLexic(CONSTANT,"Constant",stringRealNumber+temp));
+                        realNumber=false;
+                        stringRealNumber="";
+                    }
+                    else {
+                        realNumber=true;
+                        stringRealNumber=temp;
+                    }
+                    
+                }
+                else if (temp.equals(",")) {
+                    if (realNumber) stringRealNumber+=",";
+                    else result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(temp.toUpperCase())),"",temp));
+                }
                 else if (temp.equals("=") || temp.equals(">")|| temp.equals("<")) {
                     if (logical){
                         logical=false;
@@ -118,6 +138,13 @@ public class Parser {
                 else if (lexicalName.contains(temp.toUpperCase())) 
                     result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(temp.toUpperCase())),"",temp));
                 else result.add(new TokenLexic(VARIABLE, "Variable" , temp));
+                if (realNumber && !temp.matches("^[0-9]+$") && !temp.equals(",")) {
+                    realNumber=false;
+                    if (stringRealNumber.contains(",")) {
+                        result.add(result.size()-2, new TokenLexic(CONSTANT, "Constant", stringRealNumber.substring(0, stringRealNumber.length()-1)));
+                        result.add(result.size()-2, new TokenLexic(lexicalCode.get(lexicalName.indexOf(",")), "", ","));
+                    }
+                }
                 if (logical && !temp.equals("=") && !temp.equals(">")&& !temp.equals("<")) {
                     logical= false;
                     result.add(result.size()-2, new TokenLexic(lexicalCode.get(lexicalName.indexOf(logicalString)), "", logicalString));
