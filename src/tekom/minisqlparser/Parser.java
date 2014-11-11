@@ -86,17 +86,20 @@ public class Parser {
         StringTokenizer st= new StringTokenizer(sql,"*,.<>=(); ",true);
         while(st.hasMoreTokens()){
             temp=st.nextToken();
-            if (!temp.equals(" ")){
+            if (stringWithSpace && !temp.contains("\"")) {
+                stringWithSpaceTemp+=temp;
+            }
+            else if (!temp.equals(" ")){
                 if (stringWithSpace) {
                     if (temp.charAt(temp.length()-1)=='\"') 
-                        result.add(new TokenLexic(CONSTANT, "Constant", stringWithSpaceTemp+" "+temp));
+                        result.add(new TokenLexic(CONSTANT, "Constant", stringWithSpaceTemp+temp));
                     else if (temp.contains("\"")) 
                         result.add(new TokenLexic(UNIDENTIFIED, "Unidentified", stringWithSpaceTemp+" "+temp)); 
-                    
+                    /*
                     else {
                         stringWithSpaceTemp+=" "+temp;
                         continue;
-                    }
+                    }*/
                     stringWithSpace=false;
                     stringWithSpaceTemp="";
                 }
@@ -131,7 +134,7 @@ public class Parser {
                         logicalString="";
                     }
                     else {
-                        logical=true;//System.out.println(temp);
+                        logical=true;
                         logicalString=temp;
                     }
                 }
@@ -161,10 +164,10 @@ public class Parser {
         masing masing simbol dipisahkan spasi
         */
         
-        ArrayList result=new ArrayList();
+        ArrayList<Integer> result=new ArrayList();
         StringTokenizer st = new StringTokenizer(l);
         
-        while (st.hasMoreTokens()) result.add(st.nextToken());
+        while (st.hasMoreTokens()) result.add(Integer.parseInt(st.nextToken()));
         /*
         while(!l.isEmpty()){
             System.out.println(l);

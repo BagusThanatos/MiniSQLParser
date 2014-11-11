@@ -163,9 +163,9 @@ public class Main extends javax.swing.JFrame {
             });   
         }
         else {
-            ArrayList<Integer> r = Parser.parseLexical(s);
-            r.stream().forEach((r_) ->{
-                d.addRow(new String[]{r_+"","",""});
+            ArrayList<Integer> a = Parser.parseLexical(s);
+            a.stream().forEach((Integer a_) ->{
+                d.addRow(new String[]{"","",a_.toString()});
             });
         }
     }
