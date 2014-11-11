@@ -28,22 +28,22 @@ public class Parser {
         lexicalName.add(")");       //6
         lexicalName.add(".");       //7
         lexicalName.add(",");       //8
-        lexicalName.add(";");       //8
-        lexicalName.add("AND");     //9
-        lexicalName.add("OR");      //10
-        lexicalName.add("NOT");     //11
-        lexicalName.add(">=");      //12
-        lexicalName.add("=");       //13
-        lexicalName.add("<=");      //14
-        lexicalName.add("<");       //15
-        lexicalName.add(">");       //16
-        lexicalName.add("LIKE");    //17
-        lexicalName.add("UNION");   //18
-        lexicalName.add("JOIN");    //19
-        for (int i=1;i<=19;i++) lexicalCode.add(i);
+        lexicalName.add(";");       //9
+        lexicalName.add("AND");     //10
+        lexicalName.add("OR");      //11
+        lexicalName.add("NOT");     //12
+        lexicalName.add(">=");      //13
+        lexicalName.add("=");       //14
+        lexicalName.add("<=");      //15
+        lexicalName.add("<");       //16
+        lexicalName.add(">");       //17
+        lexicalName.add("LIKE");    //18
+        lexicalName.add("UNION");   //19
+        lexicalName.add("JOIN");    //20
+        for (int i=1;i<=20;i++) lexicalCode.add(i);
     }
     
-    private final static int UNIDENTIFIED=0;
+    private final static int UNIDENTIFIED=23;
     public final static int KEYWORDS=8;
     public final static int BOOLEANS=11;
     public final static int LOGIC_OPERATORS=17;
@@ -76,6 +76,8 @@ public class Parser {
         memiliki fungsi yang sama dengan fungsi parseSQL, hanya saja menggunakan StringTokenizer
         */
         boolean logical=false;
+        boolean stringWithSpace=false;
+        String stringWithSpaceTemp="";
         String logicalString="";
         ArrayList<TokenLexic> result = new ArrayList();
         String temp;
@@ -83,24 +85,44 @@ public class Parser {
         while(st.hasMoreTokens()){
             temp=st.nextToken();
             if (!temp.equals(" ")){
-                if (lexicalName.contains(temp.toUpperCase())) 
-                    result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(temp.toUpperCase())),"",temp));
-                else if (temp.matches("^[0-9]+$") || temp.contains("\"") || temp.contains("\'") || temp.contains("“")) 
+                if (stringWithSpace) {
+                    if (temp.charAt(temp.length()-1)=='\"') 
+                        result.add(new TokenLexic(CONSTANT, "Constant", stringWithSpaceTemp+" "+temp));
+                    else if (temp.contains("\"")) 
+                        result.add(new TokenLexic(UNIDENTIFIED, "Unidentified", stringWithSpaceTemp+" "+temp)); 
+                    
+                    else {
+                        stringWithSpaceTemp+=" "+temp;
+                        continue;
+                    }
+                    stringWithSpace=false;
+                    stringWithSpaceTemp="";
+                }
+                else if (temp.charAt(0)== '\"' && temp.charAt(temp.length()-1) != '\"') {
+                    stringWithSpace =true;
+                    stringWithSpaceTemp=temp;
+                }
+                else if (temp.matches("^[0-9]+,[0-9]+$") || temp.contains("\"") || temp.contains("\'") || temp.contains("“")) 
                     result.add(new TokenLexic(CONSTANT,"Constant",temp));
                 else if (temp.equals("=") || temp.equals(">")|| temp.equals("<")) {
                     if (logical){
                         logical=false;
-                        result.remove(result.size()-1);
-                        result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(temp.toUpperCase())),"",temp));
+                        result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(""+logicalString+temp)),"",logicalString+temp));
+                        logicalString="";
                     }
                     else {
-                        logical=true;
+                        logical=true;//System.out.println(temp);
                         logicalString=temp;
                     }
-                    continue;
                 }
+                else if (lexicalName.contains(temp.toUpperCase())) 
+                    result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(temp.toUpperCase())),"",temp));
                 else result.add(new TokenLexic(VARIABLE, "Variable" , temp));
-                if (logical) logical=false;
+                if (logical && !temp.equals("=") && !temp.equals(">")&& !temp.equals("<")) {
+                    logical= false;
+                    result.add(result.size()-2, new TokenLexic(lexicalCode.get(lexicalName.indexOf(logicalString)), "", logicalString));
+                    logicalString="";
+                }
             }
         }
         
