@@ -123,8 +123,8 @@ public class Parser {
                     }
                     
                 }
-                else if (temp.equals(",")) {
-                    if (realNumber) stringRealNumber+=",";
+                else if (temp.equals(".")) {
+                    if (realNumber) stringRealNumber+=".";
                     else result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(temp.toUpperCase())),"",temp));
                 }
                 else if (temp.equals("=") || temp.equals(">")|| temp.equals("<")) {
@@ -146,11 +146,14 @@ public class Parser {
                     result.add(realNumber || stringWithSpace?result.size():result.size()-2, new TokenLexic(lexicalCode.get(lexicalName.indexOf(logicalString)), "", logicalString));
                     logicalString="";
                 }
-                if (realNumber && !temp.matches("^[0-9]+$") && !temp.equals(",")) {
+                if (realNumber && !temp.matches("^[0-9]+$") && !temp.equals(".")) {
                     realNumber=false;
-                    if (stringRealNumber.contains(",")) {
+                    if (stringRealNumber.contains(".")) {
                         result.add(result.size()-2, new TokenLexic(CONSTANT, "Constant", stringRealNumber.substring(0, stringRealNumber.length()-1)));
-                        result.add(result.size()-2, new TokenLexic(lexicalCode.get(lexicalName.indexOf(",")), "", ","));
+                        result.add(result.size()-2, new TokenLexic(lexicalCode.get(lexicalName.indexOf(".")), "", "."));
+                    }
+                    else {
+                        result.add(logical?result.size():result.size()-1,new TokenLexic(CONSTANT, "Constant", stringRealNumber));
                     }
                 }
             }
