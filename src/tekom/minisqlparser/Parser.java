@@ -45,9 +45,9 @@ public class Parser {
     
     private final static int UNIDENTIFIED=23;
     public final static int KEYWORDS=8;
-    public final static int BOOLEANS=11;
-    public final static int LOGIC_OPERATORS=17;
-    public final static int SET_OPERATOR=19;
+    public final static int BOOLEANS=12;
+    public final static int LOGIC_OPERATORS=18;
+    public final static int SET_OPERATOR=20;
     public final static int VARIABLE=21;
     public final static int CONSTANT=22;
     public static ArrayList<Integer> parseSQL(String sql){
@@ -141,6 +141,11 @@ public class Parser {
                 else if (lexicalName.contains(temp.toUpperCase())) 
                     result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(temp.toUpperCase())),"",temp));
                 else result.add(new TokenLexic(VARIABLE, "Variable" , temp));
+                if (logical && !temp.equals("=") && !temp.equals(">")&& !temp.equals("<")) {
+                    logical= false;
+                    result.add(realNumber || stringWithSpace?result.size():result.size()-2, new TokenLexic(lexicalCode.get(lexicalName.indexOf(logicalString)), "", logicalString));
+                    logicalString="";
+                }
                 if (realNumber && !temp.matches("^[0-9]+$") && !temp.equals(",")) {
                     realNumber=false;
                     if (stringRealNumber.contains(",")) {
@@ -148,13 +153,12 @@ public class Parser {
                         result.add(result.size()-2, new TokenLexic(lexicalCode.get(lexicalName.indexOf(",")), "", ","));
                     }
                 }
-                if (logical && !temp.equals("=") && !temp.equals(">")&& !temp.equals("<")) {
-                    logical= false;
-                    result.add(result.size()-2, new TokenLexic(lexicalCode.get(lexicalName.indexOf(logicalString)), "", logicalString));
-                    logicalString="";
-                }
             }
         }
+        if (stringWithSpace) result.add(new TokenLexic(CONSTANT, "Constant", stringWithSpaceTemp));
+        if (logical)
+            result.add(new TokenLexic(CONSTANT, "Constant", logicalString));
+        if (realNumber) result.add(new  TokenLexic(CONSTANT, "Constant", stringRealNumber));
         
         return result;
     }
