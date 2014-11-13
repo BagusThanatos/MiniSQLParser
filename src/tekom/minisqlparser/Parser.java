@@ -44,7 +44,7 @@ public class Parser {
     }
     
     private final static int UNIDENTIFIED=23;
-    public final static int KEYWORDS=8;
+    public final static int KEYWORDS=9;
     public final static int BOOLEANS=12;
     public final static int LOGIC_OPERATORS=18;
     public final static int SET_OPERATOR=20;
@@ -130,7 +130,11 @@ public class Parser {
                 else if (temp.equals("=") || temp.equals(">")|| temp.equals("<")) {
                     if (logical){
                         logical=false;
-                        result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(""+logicalString+temp)),"",logicalString+temp));
+                        if (temp.equals(">") || temp.equals("<")){
+                            result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(logicalString)),"",logicalString));
+                            result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(temp)),"",temp));
+                        }
+                        else result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(logicalString+temp)),"",logicalString+temp));
                         logicalString="";
                     }
                     else {
