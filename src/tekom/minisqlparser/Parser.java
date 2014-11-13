@@ -83,6 +83,8 @@ public class Parser {
         String logicalString="";
         ArrayList<TokenLexic> result = new ArrayList();
         String temp;
+        sql=sql.replace("\n", " ");
+        sql=sql.replace("\t", " ");
         StringTokenizer st= new StringTokenizer(sql,"*,.<>=(); ",true);
         while(st.hasMoreTokens()){
             temp=st.nextToken();
