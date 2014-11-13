@@ -127,14 +127,22 @@ public class Parser {
                     if (realNumber) stringRealNumber+=".";
                     else result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(temp.toUpperCase())),"",temp));
                 }
-                else if (temp.equals("=") || temp.equals(">")|| temp.equals("<")) {
+                else if (temp.equals("=")) {
+                    if (logical) {
+                        logical=false;
+                        result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(logicalString+temp)), "", logicalString+temp));   
+                    }
+                    else 
+                        result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf("=")),"" , "="));
+                    logicalString="";
+                }
+                else if (temp.equals(">")|| temp.equals("<")) {
                     if (logical){
                         logical=false;
                         if (temp.equals(">") || temp.equals("<")){
                             result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(logicalString)),"",logicalString));
                             result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(temp)),"",temp));
                         }
-                        else result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(logicalString+temp)),"",logicalString+temp));
                         logicalString="";
                     }
                     else {
