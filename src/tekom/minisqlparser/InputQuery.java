@@ -39,6 +39,11 @@ public class InputQuery extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Input Query");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         textInputQuery.setColumns(20);
         textInputQuery.setRows(5);
@@ -107,6 +112,10 @@ public class InputQuery extends javax.swing.JFrame {
         m.setQuery(this.textInputQuery.getText(),false);
         this.dispose();
     }//GEN-LAST:event_buttonOKActionPerformed
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        m.setInputQuery(false);
+    }//GEN-LAST:event_formWindowClosed
 
     /**
      * @param args the command line arguments

@@ -42,6 +42,11 @@ public class InputLexicalCode extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Input Lexical Code");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         jLabel1.setText("Input  angka, dipisahkan spasi");
 
@@ -119,6 +124,10 @@ public class InputLexicalCode extends javax.swing.JFrame {
         }
         else JOptionPane.showMessageDialog(this, "Hanya boleh terdiri dari angka dan spasi","ERROR!", JOptionPane.ERROR_MESSAGE);
     }//GEN-LAST:event_buttonOKActionPerformed
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        m.setInputLexical(false);
+    }//GEN-LAST:event_formWindowClosed
 
     /**
      * @param args the command line arguments

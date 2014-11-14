@@ -16,9 +16,15 @@ public class Help extends javax.swing.JFrame {
     /**
      * Creates new form Help
      */
+    Main m;
     public Help() {
         initComponents();
         initTable();
+    }
+    public Help(Main m){
+        initComponents();
+        initTable();
+        this.m=m;
     }
 
     private void initTable(){
@@ -44,6 +50,11 @@ public class Help extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Lexical Code List");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         tableLexical.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -74,6 +85,10 @@ public class Help extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        m.setHelp(false);
+    }//GEN-LAST:event_formWindowClosed
 
     /**
      * @param args the command line arguments

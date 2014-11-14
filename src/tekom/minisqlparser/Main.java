@@ -15,6 +15,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Main extends javax.swing.JFrame {
 
+    private boolean help=false,inputLexical=false,inputQuery=false;
     private String query;
     /**
      * Creates new form Main
@@ -147,17 +148,35 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_menuExitActionPerformed
 
     private void buttonInputQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonInputQueryActionPerformed
-        new InputQuery(this).setVisible(true);
+        if (!this.inputQuery){
+            new InputQuery(this).setVisible(true);
+            this.inputQuery=true;
+        }
     }//GEN-LAST:event_buttonInputQueryActionPerformed
 
     private void buttonLexicalCodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonLexicalCodeActionPerformed
-        new InputLexicalCode(this).setVisible(true);
+        if (!this.inputLexical) {
+            new InputLexicalCode(this).setVisible(true);
+            this.inputLexical=true;
+        }
     }//GEN-LAST:event_buttonLexicalCodeActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        new Help().setVisible(true);
+        if(!this.help){
+            new Help(this).setVisible(true);
+            this.help=true;
+        }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
+    public void setHelp(boolean h){
+        this.help=h;
+    }
+    public void setInputQuery(boolean s){
+        this.inputQuery=s;
+    }
+    public void setInputLexical(boolean s) {
+        this.inputLexical=s;
+    }
     public void setQuery(String s,boolean isLexicalCode){
         this.query=s;
         this.setTable(s,isLexicalCode);
