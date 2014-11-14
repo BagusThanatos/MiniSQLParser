@@ -43,13 +43,14 @@ public class Parser {
         for (int i=1;i<=20;i++) lexicalCode.add(i);
     }
     
-    private final static int UNIDENTIFIED=23;
+    private final static int UNIDENTIFIED=24;
     public final static int KEYWORDS=9;
     public final static int BOOLEANS=12;
     public final static int LOGIC_OPERATORS=18;
     public final static int SET_OPERATOR=20;
     public final static int VARIABLE=21;
-    public final static int CONSTANT=22;
+    public final static int CONSTANT_STRING=22;
+    public final static int CONSTANT_NUMBER=23;
     public static ArrayList<Integer> parseSQL(String sql){
         /*
         akan mengembalikan bentuk berupa kode lexical dari inputan String sql yang ada
@@ -94,7 +95,7 @@ public class Parser {
             else if (!temp.equals(" ")){
                 if (stringWithSpace) {
                     if (temp.charAt(temp.length()-1)=='\"') 
-                        result.add(new TokenLexic(CONSTANT, "Constant", stringWithSpaceTemp+temp));
+                        result.add(new TokenLexic(CONSTANT_STRING, "Constant String", stringWithSpaceTemp+temp));
                     else if (temp.contains("\"")) 
                         result.add(new TokenLexic(UNIDENTIFIED, "Unidentified", stringWithSpaceTemp+" "+temp)); 
                     /*
@@ -115,7 +116,7 @@ public class Parser {
                 */
                 else if (temp.matches("^[0-9]+$")) {
                     if (realNumber){
-                        result.add(new TokenLexic(CONSTANT,"Constant",stringRealNumber+temp));
+                        result.add(new TokenLexic(CONSTANT_NUMBER,"Constant Number",stringRealNumber+temp));
                         realNumber=false;
                         stringRealNumber="";
                     }
@@ -163,19 +164,19 @@ public class Parser {
                 if (realNumber && !temp.matches("^[0-9]+$") && !temp.equals(".")) {
                     realNumber=false;
                     if (stringRealNumber.contains(".")) {
-                        result.add(result.size()-2, new TokenLexic(CONSTANT, "Constant", stringRealNumber.substring(0, stringRealNumber.length()-1)));
+                        result.add(result.size()-2, new TokenLexic(CONSTANT_NUMBER, "Constant Number", stringRealNumber.substring(0, stringRealNumber.length()-1)));
                         result.add(result.size()-2, new TokenLexic(lexicalCode.get(lexicalName.indexOf(".")), "", "."));
                     }
                     else {
-                        result.add(logical?result.size():result.size()-1,new TokenLexic(CONSTANT, "Constant", stringRealNumber));
+                        result.add(logical?result.size():result.size()-1,new TokenLexic(CONSTANT_NUMBER, "Constant Number", stringRealNumber));
                     }
                 }
             }
         }
-        if (stringWithSpace) result.add(new TokenLexic(CONSTANT, "Constant", stringWithSpaceTemp));
+        if (stringWithSpace) result.add(new TokenLexic(CONSTANT_STRING, "Constant String", stringWithSpaceTemp));
         if (logical)
-            result.add(new TokenLexic(CONSTANT, "Constant", logicalString));
-        if (realNumber) result.add(new  TokenLexic(CONSTANT, "Constant", stringRealNumber));
+            result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(logicalString)), "", logicalString));
+        if (realNumber) result.add(new  TokenLexic(CONSTANT_NUMBER, "Constant Number", stringRealNumber));
         
         return result;
     }
