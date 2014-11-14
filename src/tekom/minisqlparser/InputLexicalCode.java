@@ -41,6 +41,7 @@ public class InputLexicalCode extends javax.swing.JFrame {
         buttonClearText = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Input Lexical Code");
 
         jLabel1.setText("Input  angka, dipisahkan spasi");
 

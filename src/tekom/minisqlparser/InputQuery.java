@@ -38,6 +38,7 @@ public class InputQuery extends javax.swing.JFrame {
         buttonClearText = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Input Query");
 
         textInputQuery.setColumns(20);
         textInputQuery.setRows(5);

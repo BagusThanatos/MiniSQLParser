@@ -43,6 +43,7 @@ public class Help extends javax.swing.JFrame {
         tableLexical = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Lexical Code List");
 
         tableLexical.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
