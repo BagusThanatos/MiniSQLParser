@@ -17,8 +17,8 @@ public class Parser {
     Class untuk melakukan parsing terhadap inputan yang diberikan
     */
     private final static Stack<String> s = new Stack();
-    private final static ArrayList<String> lexicalName= new ArrayList();
-    private final static ArrayList<Integer> lexicalCode= new ArrayList();
+    protected final static ArrayList<String> lexicalName= new ArrayList();
+    protected final static ArrayList<Integer> lexicalCode= new ArrayList();
     static {
         lexicalName.add("SELECT");  //1
         lexicalName.add("*");       //2
@@ -43,7 +43,7 @@ public class Parser {
         for (int i=1;i<=20;i++) lexicalCode.add(i);
     }
     
-    private final static int UNIDENTIFIED=24;
+    public final static int UNIDENTIFIED=24;
     public final static int KEYWORDS=9;
     public final static int BOOLEANS=12;
     public final static int LOGIC_OPERATORS=18;

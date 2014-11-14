@@ -41,7 +41,8 @@ public class Main extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menuExit = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
+        menuLexicalCodeList = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -91,8 +92,17 @@ public class Main extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Help");
-        jMenuBar1.add(jMenu2);
+        menuLexicalCodeList.setText("Help");
+
+        jMenuItem1.setText("Lexical Code List");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        menuLexicalCodeList.add(jMenuItem1);
+
+        jMenuBar1.add(menuLexicalCodeList);
 
         setJMenuBar(jMenuBar1);
 
@@ -143,6 +153,10 @@ public class Main extends javax.swing.JFrame {
     private void buttonLexicalCodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonLexicalCodeActionPerformed
         new InputLexicalCode(this).setVisible(true);
     }//GEN-LAST:event_buttonLexicalCodeActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        new Help().setVisible(true);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     public void setQuery(String s,boolean isLexicalCode){
         this.query=s;
@@ -204,11 +218,12 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JButton buttonInputQuery;
     private javax.swing.JButton buttonLexicalCode;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelResult;
     private javax.swing.JMenuItem menuExit;
+    private javax.swing.JMenu menuLexicalCodeList;
     private javax.swing.JTable tableMain;
     // End of variables declaration//GEN-END:variables
 }

@@ -40,7 +40,7 @@ public class InputLexicalCode extends javax.swing.JFrame {
         buttonCancel = new javax.swing.JButton();
         buttonClearText = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Input  angka, dipisahkan spasi");
 
