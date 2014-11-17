@@ -42,33 +42,85 @@ public class Parser {
         lexicalName.add("JOIN");    //20
         for (int i=1;i<=20;i++) lexicalCode.add(i);
     }
+    public final static int START=0;
+    public final static int SELECT=1;
+    public final static int STAR=2;
+    public final static int WHERE=3;
+    public final static int FROM=4;
+    public final static int KURKA=5;
+    public final static int KURTUP=6;
+    public final static int PERIOD=7;
+    public final static int COMMA=8;
+    public final static int SEMICOLON=9;
+    public final static int AND=10;
+    public final static int OR=11;
+    public final static int NOT=12;
+    public final static int GREATER_EQUAL=13;
+    public final static int EQUAL=14;
+    public final static int LESS_EQUAL=15;
+    public final static int LESS=16;
+    public final static int GREATER=17;
+    public final static int LIKE=18;
+    public final static int UNION=19;
+    public final static int JOIN=20;
+    public final static int VARIABLE=21;
+    public final static int CONSTANT_STRING=22;
+    public final static int CONSTANT_NUMBER=23;
     
     public final static int UNIDENTIFIED=24;
     public final static int KEYWORDS=9;
     public final static int BOOLEANS=12;
     public final static int LOGIC_OPERATORS=18;
     public final static int SET_OPERATOR=20;
-    public final static int VARIABLE=21;
-    public final static int CONSTANT_STRING=22;
-    public final static int CONSTANT_NUMBER=23;
-    public static ArrayList<Integer> parseSQL(String sql){
+    
+    public static ArrayList<TokenLexic> parseSQL(String sql){
         /*
         akan mengembalikan bentuk berupa kode lexical dari inputan String sql yang ada
         */
-        ArrayList<Integer> result = new ArrayList();
-        String substring;
-        int nexts= -1;
-        char firstChar;
-        while (!sql.isEmpty()){
-            sql=sql.trim();
-            nexts=nextSymbol(sql);
-            firstChar=sql.charAt(0);
-            substring= sql.substring(0,nexts==0? 1:nexts);
-            if (!substring.equals(sql)) sql=sql.substring(nexts) ;
-            else sql="";
-            if (lexicalName.contains(substring.toUpperCase())) result.add(lexicalCode.get(lexicalName.indexOf(substring.toUpperCase())));
-            else result.add(VARIABLE);
-            System.out.println(substring);
+        ArrayList<TokenLexic> result= new ArrayList();
+        int flag=START;
+        String temp="";
+        char tempChar;
+        for (int i =0; i< sql.length();i++){
+            tempChar=sql.charAt(i);
+            if (flag==START) {
+                if (tempChar=='s' || tempChar==('S')) flag=SELECT;
+                else if (tempChar=='j' || tempChar=='J') flag=JOIN;
+                else if (tempChar=='a' || tempChar=='A') flag =AND;
+                else if (tempChar=='o' || tempChar=='O') flag =OR;
+                else if (tempChar=='n' || tempChar=='N') flag =NOT;
+                else if (tempChar=='w' || tempChar=='W') flag=WHERE;
+                else if (tempChar=='f' || tempChar=='F') flag =FROM;
+                else if (tempChar=='u' || tempChar=='U') flag =UNION;
+                else if (tempChar=='l' || tempChar=='L') flag =LIKE;
+                else if (tempChar=='\"') flag = CONSTANT_STRING;
+                else if (tempChar>=48 && tempChar<=57) flag=CONSTANT_NUMBER;
+                else if ((tempChar+"").matches("^[*,.<>=(); ]")) {
+                    if (!(tempChar+"").equals(" ")) result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(sql.charAt(i)+"")), "", sql.charAt(i)+""));
+                    temp="";
+                    
+                }
+                else flag=VARIABLE;
+                temp+=sql.charAt(i);
+            }
+            else if (flag==SELECT){
+                if ("SELECT".equals((temp+tempChar).toUpperCase())) {
+                    result.add(new TokenLexic(SELECT, "", temp+tempChar));
+                    temp="";
+                    flag=START;
+                }
+                else if ("SELECT".contains((temp+tempChar).toUpperCase())) temp+=tempChar;
+                else if ((tempChar+"").matches("^[*,.<>=(); ]")) {
+                    result.add(new TokenLexic(VARIABLE, "Variable", temp));
+                    if (!(tempChar+"").equals(" ")) result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(sql.charAt(i)+"")), "", sql.charAt(i)+""));
+                }
+                else {
+                    flag=VARIABLE;
+                    temp+=tempChar;
+                }
+            }
+            System.out.println(temp);
+            //else if ;
         }
         return result;
     }
@@ -180,22 +232,7 @@ public class Parser {
         
         return result;
     }
-    public static ArrayList<TokenLexic> parseSQL3(String sql){
-        ArrayList<TokenLexic> result= new ArrayList();
-        
-        String temp;
-        boolean keyword = false, logic=false,booleanOp=false, setfalse=false,
-                constant_string=false, constant_number=false, variable=false ;
-        for (int i =0; i< sql.length();i++){
-            if (sql.substring(i,i+1).matches("^[*,.<>=();]")) {
-                result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(sql.charAt(i)+"")), "", sql.charAt(i)+""));
-            }
-            
-            //else if ;
-        }
-        
-        return result;
-    }
+    
     public static ArrayList<Integer> parseLexical(String l){
         /*
         melakukan parsing terhadap inputan yang berupa simbol lexical, seperti: 1 2 11
