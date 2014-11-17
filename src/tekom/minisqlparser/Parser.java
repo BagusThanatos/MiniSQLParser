@@ -82,10 +82,42 @@ public class Parser {
         sql=sql.replace("\t", " ");
         int flag=START;
         String temp="";
+        String state="";
         char tempChar;
         for (int i =0; i< sql.length();i++){
             tempChar=sql.charAt(i);
-            
+            switch(flag) {
+                case SELECT:
+                    state="SELECT";
+                    break;
+                case JOIN:
+                    state="JOIN";
+                    break;
+                case FROM:
+                    state="FROM";
+                    break;
+                case WHERE:
+                    state="WHERE";
+                    break;
+                case AND:
+                    state="AND";
+                    break;
+                case OR:
+                    state="OR";
+                    break;
+                case NOT:
+                    state="NOT";
+                    break;
+                case UNION:
+                    state="UNION";
+                    break;
+                case LIKE:
+                    state="LIKE";
+                    break;
+                default:
+                     break;
+                
+            }
             if (flag==START) {
                 if (tempChar=='s' || tempChar==('S')) flag=SELECT;
                 else if (tempChar=='j' || tempChar=='J') flag=JOIN;
@@ -105,7 +137,7 @@ public class Parser {
                     continue;
                 }
                 else flag=VARIABLE;
-                temp+=tempChar;
+                temp=tempChar+"";
             }
             else if (flag==EQUAL){
                 if (tempChar!='=') { System.out.println(temp);
@@ -126,13 +158,21 @@ public class Parser {
                     flag=START;
                 }
             }*/
+            else if (flag==CONSTANT_STRING) {
+                if (tempChar!='\"') temp+=tempChar;
+                else {
+                    result.add(new TokenLexic(CONSTANT_STRING,"",temp+tempChar));
+                    temp="";
+                    flag=START;
+                }
+            }
             else if ((flag==CONSTANT_NUMBER)) {
                 if (tempChar>=48 && tempChar<=57) temp+=tempChar;
                 else if (tempChar=='.') {
                     if (temp.contains(".")) flag=UNIDENTIFIED;
                     temp+=tempChar;
                 }
-                else if ((tempChar+"").matches("^[*,.<>=(); ]")){
+                else if ((tempChar+"").matches("^[*,.<>=();\" ]")){
                     result.add(new TokenLexic(VARIABLE, "Variable", temp));
                     if (!(tempChar+"").equals(" ")) result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(sql.charAt(i)+"")), "", sql.charAt(i)+""));
                     flag=START;
@@ -140,23 +180,38 @@ public class Parser {
                 }
             }
             else if (flag==VARIABLE){
-                if ((tempChar+"").matches("^[*,.<>=(); ]")){
+                if ((tempChar+"").matches("^[*,.<>=();\" ]")){
                     result.add(new TokenLexic(VARIABLE, "Variable", temp));
-                    if (!(tempChar+"").equals(" ")) result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(sql.charAt(i)+"")), "", sql.charAt(i)+""));
+                    if (tempChar=='>' || flag=='<') {
+                            flag=EQUAL;
+                            temp=tempChar+"";
+                            continue;
+                        }
+                    else if (tempChar=='\"') {
+                        flag=CONSTANT_STRING;
+                        temp=tempChar+"";
+                        continue;
+                    }
+                    else if (!(tempChar+"").equals(" ")) result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(sql.charAt(i)+"")), "", sql.charAt(i)+""));
                     flag=START;
                     temp="";
                 }
                 else temp+=tempChar;
             }
-            else if (flag==SELECT){
-                if ((tempChar+"").matches("^[*,.<>=(); ]")) {
-                    if (temp.toUpperCase().equals("SELECT")){
-                        result.add(new TokenLexic(SELECT, "", temp));   
+            else {
+                if ((tempChar+"").matches("^[*,.<>=();\" ]")) {
+                    if (temp.toUpperCase().equals(state)){
+                        result.add(new TokenLexic(flag, "", temp));   
                     }
                     else {
                         result.add(new TokenLexic(VARIABLE, "Variable", temp));
                         if (tempChar=='>' || flag=='<') {
                             flag=EQUAL;
+                            temp=tempChar+"";
+                            continue;
+                        }
+                        else if (tempChar=='\"') {
+                            flag=CONSTANT_STRING;
                             temp=tempChar+"";
                             continue;
                         }
@@ -166,210 +221,7 @@ public class Parser {
                     flag=START;
                     temp="";
                 }
-                else if ("SELECT".contains((temp+tempChar).toUpperCase())) temp+=tempChar;
-                else {
-                    flag=VARIABLE;
-                    temp+=tempChar;
-                }
-            }
-            
-            else if (flag==FROM){
-                if ((tempChar+"").matches("^[*,.<>=(); ]")) {
-                    if (temp.toUpperCase().equals("FROM")){
-                        result.add(new TokenLexic(FROM, "", temp));
-                        
-                    }
-                    else {
-                        result.add(new TokenLexic(VARIABLE, "Variable", temp));
-                        if (tempChar=='>' || flag=='<') {
-                            flag=EQUAL;
-                            temp+=tempChar;
-                            continue;
-                        }
-                        else if (!(tempChar+"").equals(" ")) result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(sql.charAt(i)+"")), "", sql.charAt(i)+""));
-                        
-                    }
-                    flag=START;
-                    temp="";
-                }
-                else if ("FROM".contains((temp+tempChar).toUpperCase())) temp+=tempChar;
-                else {
-                    flag=VARIABLE;
-                    temp+=tempChar;
-                }
-            }
-            else if (flag==WHERE){
-                
-                if ((tempChar+"").matches("^[*,.<>=(); ]")) {
-                    if (temp.toUpperCase().equals("WHERE")){
-                        result.add(new TokenLexic(WHERE, "", temp));
-                        
-                    }
-                    else {
-                        result.add(new TokenLexic(VARIABLE, "Variable", temp));
-                        if (tempChar=='>' || flag=='<') {
-                            flag=EQUAL;
-                            temp+=tempChar;
-                            continue;
-                        }
-                        else if (!(tempChar+"").equals(" ")) result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(sql.charAt(i)+"")), "", sql.charAt(i)+""));
-                        
-                    }
-                    flag=START;
-                    temp="";
-                }
-                else if ("WHERE".contains((temp+tempChar).toUpperCase())) temp+=tempChar;
-                else {
-                    flag=VARIABLE;
-                    temp+=tempChar;
-                }
-            }
-            else if (flag==AND){
-                if ((tempChar+"").matches("^[*,.<>=(); ]")) {
-                    if (temp.toUpperCase().equals("AND")) {
-                        result.add(new TokenLexic(AND, "", temp));     
-                        
-                    }
-                    else {
-                        result.add(new TokenLexic(VARIABLE, "Variable", temp));
-                        if (tempChar=='>' || flag=='<') {
-                            flag=EQUAL;
-                            temp+=tempChar;
-                            continue;
-                        }
-                        else if (!(tempChar+"").equals(" ")) result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(sql.charAt(i)+"")), "", sql.charAt(i)+""));
-                        
-                    }
-                    flag=START;
-                    temp="";
-                }
-                else if ("AND".contains((temp+tempChar).toUpperCase())) temp+=tempChar;
-                else {
-                    flag=VARIABLE;
-                    temp+=tempChar;
-                }
-            
-            }
-            else if (flag==OR){
-                if ((tempChar+"").matches("^[*,.<>=(); ]")) {
-                    if (temp.toUpperCase().equals("OR")){
-                        result.add(new TokenLexic(OR, "", temp));
-                        
-                    }
-                    else {
-                        result.add(new TokenLexic(VARIABLE, "Variable", temp));
-                        if (tempChar=='>' || flag=='<') {
-                            flag=EQUAL;
-                            temp+=tempChar;
-                            continue;
-                        }
-                        else if (!(tempChar+"").equals(" ")) result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(sql.charAt(i)+"")), "", sql.charAt(i)+""));
-                        
-                    }
-                    flag=START;
-                    temp="";
-                }
-                else if ("OR".contains((temp+tempChar).toUpperCase())) temp+=tempChar;
-                else {
-                    flag=VARIABLE;
-                    temp+=tempChar;
-                }
-            }
-            else if (flag==NOT){
-                if ((tempChar+"").matches("^[*,.<>=(); ]")) {
-                    if (temp.toUpperCase().equals("OR")){
-                        result.add(new TokenLexic(OR, "", temp));
-                        
-                    }
-                    else {
-                        result.add(new TokenLexic(VARIABLE, "Variable", temp));
-                        if (tempChar=='>' || flag=='<') {
-                            flag=EQUAL;
-                            temp+=tempChar;
-                            continue;
-                        }
-                        else if (!(tempChar+"").equals(" ")) result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(sql.charAt(i)+"")), "", sql.charAt(i)+""));
-                        
-                    }
-                    flag=START;
-                    temp="";
-                }
-                else if ("OR".contains((temp+tempChar).toUpperCase())) temp+=tempChar;
-                else {
-                    flag=VARIABLE;
-                    temp+=tempChar;
-                }
-            }
-            else if (flag==LIKE){
-                if ((tempChar+"").matches("^[*,.<>=(); ]")) {
-                    if (temp.toUpperCase().equals("LIKE")){
-                        result.add(new TokenLexic(LIKE, "", temp));
-                        
-                    }
-                    else {
-                        result.add(new TokenLexic(VARIABLE, "Variable", temp));
-                        if (tempChar=='>' || flag=='<') {
-                            flag=EQUAL;
-                            temp+=tempChar;
-                            continue;
-                        }
-                        else if (!(tempChar+"").equals(" ")) result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(sql.charAt(i)+"")), "", sql.charAt(i)+""));
-                        
-                    }
-                    flag=START;
-                    temp="";
-                }
-                else if ("LIKE".contains((temp+tempChar).toUpperCase())) temp+=tempChar;
-                else {
-                    flag=VARIABLE;
-                    temp+=tempChar;
-                }
-            }
-            else if (flag==UNION){
-                if ((tempChar+"").matches("^[*,.<>=(); ]")) {
-                    if (temp.toUpperCase().equals("UNION")){
-                        result.add(new TokenLexic(UNION, "", temp));
-                        
-                    }
-                    else {
-                        result.add(new TokenLexic(VARIABLE, "Variable", temp));
-                        if (tempChar=='>' || flag=='<') {
-                            flag=EQUAL;
-                            temp+=tempChar;
-                            continue;
-                        }
-                        else if (!(tempChar+"").equals(" ")) result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(sql.charAt(i)+"")), "", sql.charAt(i)+""));
-                        
-                    }
-                    flag=START;
-                    temp="";
-                }
-                else if ("UNION".contains((temp+tempChar).toUpperCase())) temp+=tempChar;
-                else {
-                    flag=VARIABLE;
-                    temp+=tempChar;
-                }
-            }
-            else if (flag==JOIN){
-                if ((tempChar+"").matches("^[*,.<>=(); ]")) {
-                    if (temp.toUpperCase().equals("JOIN")){
-                        result.add(new TokenLexic(JOIN, "", temp));
-                        
-                    }
-                    else {
-                        result.add(new TokenLexic(VARIABLE, "Variable", temp));
-                        if (tempChar=='>' || flag=='<') {
-                            flag=EQUAL;
-                            temp+=tempChar;
-                            continue;
-                        }
-                        else if (!(tempChar+"").equals(" ")) result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(sql.charAt(i)+"")), "", sql.charAt(i)+""));
-                        
-                    }
-                    flag=START;
-                    temp="";
-                }
-                else if ("JOIN".contains((temp+tempChar).toUpperCase())) temp+=tempChar;
+                else if (state.contains((temp+tempChar).toUpperCase())) temp+=tempChar;
                 else {
                     flag=VARIABLE;
                     temp+=tempChar;
