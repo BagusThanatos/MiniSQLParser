@@ -190,7 +190,7 @@ public class Main extends javax.swing.JFrame {
         removeTableValues();
         DefaultTableModel d = (DefaultTableModel) this.tableMain.getModel();
         if (!isLexicalCode){
-            ArrayList<TokenLexic> r = Parser.parseSQL2(s);
+            ArrayList<TokenLexic> r = Parser.parseSQL(s);
             r.stream().forEach((r_) -> { 
                 d.addRow(new String[]{r_.getValue()+"",r_.getName(),r_.getTokenCode()+""});
             });   

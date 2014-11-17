@@ -20,7 +20,8 @@ public class TekomMiniSQLParser {
         //String a="SELECT * FROM tab_mhs WHERE tab_mhs.nim = “110399999” and nama like \"a%\" and ();";
         
         String a = "select a from b where 222,222 = 2222, abc=a, 22=22, \"aaaa\" " ;
-        Parser.parseSQL(a).stream().forEach((l) -> {
+        String b="select a,b,c, d.a from a wher a=b, a=c ,d>=e, c=>a,sel and or union join,and,or,union,join";
+        Parser.parseSQL(b).stream().forEach((l) -> {
             System.out.println(l.getValue()+" | "+l.getName()+" | "+l.getTokenCode());
         });
     }

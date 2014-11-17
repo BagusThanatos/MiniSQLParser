@@ -19,11 +19,16 @@ public class TokenLexic {
     
     public TokenLexic(int tc, String s, String v){
         this.tokenCode=tc;
-        if (tc<=Parser.KEYWORDS) this.string="Keyword";
+        if (!s.equals("")) this.string=s;
+        else if (tc<=Parser.KEYWORDS) this.string="Keyword";
         else if(tc<=Parser.BOOLEANS) this.string="Boolean Operator";
         else if(tc<=Parser.LOGIC_OPERATORS) this.string="Logic Operator";
         else if (tc<=Parser.SET_OPERATOR) this.string="Set Operator";
-        else this.string=s;
+        else if (tc==Parser.CONSTANT_NUMBER) this.string="Constant Number";
+        else if (tc== Parser.CONSTANT_STRING) this.string="Constant String";
+        else if (tc==Parser.VARIABLE) this.string="Variable";
+        else if (tc==Parser.UNIDENTIFIED) this.string="Unidentified";
+        
         this.value=v;
     }
 
