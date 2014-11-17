@@ -180,6 +180,22 @@ public class Parser {
         
         return result;
     }
+    public static ArrayList<TokenLexic> parseSQL3(String sql){
+        ArrayList<TokenLexic> result= new ArrayList();
+        
+        String temp;
+        boolean keyword = false, logic=false,booleanOp=false, setfalse=false,
+                constant_string=false, constant_number=false, variable=false ;
+        for (int i =0; i< sql.length();i++){
+            if (sql.substring(i,i+1).matches("^[*,.<>=();]")) {
+                result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(sql.charAt(i)+"")), "", sql.charAt(i)+""));
+            }
+            
+            //else if ;
+        }
+        
+        return result;
+    }
     public static ArrayList<Integer> parseLexical(String l){
         /*
         melakukan parsing terhadap inputan yang berupa simbol lexical, seperti: 1 2 11
