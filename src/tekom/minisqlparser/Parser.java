@@ -115,7 +115,8 @@ public class Parser {
                     state="LIKE";
                     break;
                 default:
-                     ;  
+                     break;
+                
             }
             if (flag==START) {
                 if (tempChar=='s' || tempChar==('S')) flag=SELECT;
@@ -129,7 +130,7 @@ public class Parser {
                 else if (tempChar=='l' || tempChar=='L') flag =LIKE;
                 else if (tempChar=='\"') flag = CONSTANT_STRING;
                 else if (tempChar>=48 && tempChar<=57) flag=CONSTANT_NUMBER;
-                else if (tempChar=='>' || tempChar=='<') flag=EQUAL;
+                else if (tempChar=='>' || flag=='<') flag=EQUAL;
                 else if ((tempChar+"").matches("^[*,.=(); ]")) {
                     if (!(tempChar+"").equals(" ")) result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(sql.charAt(i)+"")), "", sql.charAt(i)+""));
                     temp="";
@@ -139,13 +140,12 @@ public class Parser {
                 temp=tempChar+"";
             }
             else if (flag==EQUAL){
-                if (tempChar!='=') {
+                if (tempChar!='=') { System.out.println(temp);
                     result.add(new TokenLexic(temp.equals("<") ? LESS:GREATER, "", temp));
                     i-=1;
                 }
                 else if (temp.equals(">")) result.add(new TokenLexic(GREATER_EQUAL, "", ">="));
                 else if (temp.equals("<")) result.add(new TokenLexic(LESS_EQUAL, "", "<="));
-                System.out.println(temp+tempChar);
                 temp="";
                 flag=START;
             }
@@ -174,28 +174,15 @@ public class Parser {
                 }
                 else if ((tempChar+"").matches("^[*,.<>=();\" ]")){
                     result.add(new TokenLexic(VARIABLE, "Variable", temp));
-                    if (tempChar=='>' || tempChar=='<') {
-                        flag=EQUAL;
-                        temp=tempChar+"";
-                            continue;
-                        }
-                    else if (tempChar=='\"') {
-                        flag=CONSTANT_STRING;
-                        temp=tempChar+"";
-                        continue;
-                    }
-                    else if (!(tempChar+"").equals(" ")) result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(sql.charAt(i)+"")), "", sql.charAt(i)+""));
+                    if (!(tempChar+"").equals(" ")) result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(sql.charAt(i)+"")), "", sql.charAt(i)+""));
                     flag=START;
                     temp="";
                 }
             }
-            else if (flag==UNIDENTIFIED){
-                temp+=tempChar;
-            }
             else if (flag==VARIABLE){
                 if ((tempChar+"").matches("^[*,.<>=();\" ]")){
                     result.add(new TokenLexic(VARIABLE, "Variable", temp));
-                    if (tempChar=='>' || tempChar=='<') {
+                    if (tempChar=='>' || flag=='<') {
                             flag=EQUAL;
                             temp=tempChar+"";
                             continue;
@@ -218,7 +205,7 @@ public class Parser {
                     }
                     else {
                         result.add(new TokenLexic(VARIABLE, "Variable", temp));
-                        if (tempChar=='>' || tempChar=='<') {
+                        if (tempChar=='>' || flag=='<') {
                             flag=EQUAL;
                             temp=tempChar+"";
                             continue;
@@ -240,7 +227,7 @@ public class Parser {
                     temp+=tempChar;
                 }
             }
-            if (temp.equals("<")) System.out.println(flag);
+            
         }
         if (!temp.isEmpty()) result.add(new TokenLexic(flag, "", temp));
         return result;
