@@ -16,7 +16,6 @@ public class Parser {
     /*
     Class untuk melakukan parsing terhadap inputan yang diberikan
     */
-    private final static Stack<String> s = new Stack();
     protected final static ArrayList<String> lexicalName= new ArrayList();
     protected final static ArrayList<Integer> lexicalCode= new ArrayList();
     static {
@@ -72,6 +71,24 @@ public class Parser {
     public final static int BOOLEANS=12;
     public final static int LOGIC_OPERATORS=18;
     public final static int SET_OPERATOR=20;
+    
+    
+    //ini untuk melakukan pengecekan terhadap kebenaran suatu query
+    private final static State s1= new State("q1", false);
+    private final static State s2= new State("q2", false);
+    private final static State s3= new State("q3", false);
+    private final static State s4= new State("q4", false);
+    private final static State s5= new State("q5", false);
+    private final static State s6= new State("q6", true);
+    static {
+        s1.insertNextState(s2, SELECT);
+        s2.insertNextState(s3, STAR);
+        s3.insertNextState(s4, FROM);
+        s4.insertNextState(s5, VARIABLE);
+        s5.insertNextState(s6, SEMICOLON);
+        
+    }
+    
     
     public static ArrayList<TokenLexic> parseSQL(String sql){
         /*
@@ -374,6 +391,22 @@ public class Parser {
             else l="";
         }
         */
+        return result;
+    }
+    public static boolean isValid(ArrayList<Integer> i){
+        Stack<Integer> stack = new Stack();
+        State s= s1;
+        for (Integer i_ : i) {
+            s=s.getNextStates(i_, NextState.emptyString);
+            if (s==null) return false;
+        }
+        return s.getStatus()==true && stack.isEmpty();
+    }
+    public static ArrayList<Integer> toArrayInt(ArrayList<TokenLexic> t){
+        ArrayList<Integer> result= new ArrayList();
+        t.stream().forEach((t_) -> {
+            result.add(t_.getTokenCode());
+        });
         return result;
     }
     public static int nextSymbol(String sql){

@@ -187,6 +187,7 @@ public class Main extends javax.swing.JFrame {
     }
     private void setTable(String s,boolean isLexicalCode){
         if (s.isEmpty()) return;
+        boolean valid= false;
         removeTableValues();
         DefaultTableModel d = (DefaultTableModel) this.tableMain.getModel();
         if (!isLexicalCode){
@@ -194,13 +195,17 @@ public class Main extends javax.swing.JFrame {
             r.stream().forEach((r_) -> { 
                 d.addRow(new String[]{r_.getValue()+"",r_.getName(),r_.getTokenCode()+""});
             });   
+            valid = Parser.isValid(Parser.toArrayInt(r));
         }
         else {
             ArrayList<Integer> a = Parser.parseLexical(s);
             a.stream().forEach((Integer a_) ->{
                 d.addRow(new String[]{"","",a_.toString()});
             });
+            valid = Parser.isValid(a);
         }
+        if (valid) this.labelResult.setText("VALID");
+        else this.labelResult.setText("TIDAK VALID");
     }
     /**
      * @param args the command line arguments

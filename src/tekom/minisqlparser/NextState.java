@@ -10,9 +10,10 @@ package tekom.minisqlparser;
  * @author BagusThanatos
  */
 public class NextState {
+    public static int otherwise=-2;
     public static int emptyString=-1;
     private int input,pop,push;
-    private State nextState;
+    private final State nextState;
     
     public NextState(State n, int i, int pop,int push){
         this.input=i;

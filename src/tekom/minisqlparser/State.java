@@ -22,17 +22,17 @@ public class State {
         this.acceptedState=acc;
         this.nextStates= new ArrayList();
     }
-    private State getNextStates(int i){
+    public State getNextStates(final int i, final int pop){
         for (NextState nextState : this.nextStates) {
-            if (nextState.getInput() == i) {
+            if (nextState.getInput() == i && nextState.getPopSymbol()==pop) 
                 return nextState.getNextState();
-            }
+            
         }
         return null;
     }
     
     public void insertNextState(State s,int input){
-        //this.nextStates.add(new NextState(s, input));
+        this.nextStates.add(new NextState(s, input,NextState.emptyString,NextState.emptyString));
     }
     
     public boolean getStatus(){
