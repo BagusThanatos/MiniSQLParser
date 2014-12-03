@@ -28,18 +28,19 @@ public class Parser {
         lexicalName.add(".");       //7
         lexicalName.add(",");       //8
         lexicalName.add(";");       //9
-        lexicalName.add("AND");     //10
-        lexicalName.add("OR");      //11
-        lexicalName.add("NOT");     //12
-        lexicalName.add(">=");      //13
-        lexicalName.add("=");       //14
-        lexicalName.add("<=");      //15
-        lexicalName.add("<");       //16
-        lexicalName.add(">");       //17
-        lexicalName.add("LIKE");    //18
-        lexicalName.add("UNION");   //19
-        lexicalName.add("JOIN");    //20
-        for (int i=1;i<=20;i++) lexicalCode.add(i);
+        lexicalName.add("IN");      //10
+        lexicalName.add("AND");     //11
+        lexicalName.add("OR");      //12
+        lexicalName.add("NOT");     //13
+        lexicalName.add(">=");      //14
+        lexicalName.add("=");       //15
+        lexicalName.add("<=");      //16
+        lexicalName.add("<");       //17
+        lexicalName.add(">");       //18
+        lexicalName.add("LIKE");    //19
+        lexicalName.add("UNION");   //20
+        lexicalName.add("JOIN");    //21
+        for (int i=1;i<=21;i++) lexicalCode.add(i);
     }
     public final static int START=0;
     public final static int SELECT=1;
@@ -51,23 +52,24 @@ public class Parser {
     public final static int PERIOD=7;
     public final static int COMMA=8;
     public final static int SEMICOLON=9;
-    public final static int AND=10;
-    public final static int OR=11;
-    public final static int NOT=12;
-    public final static int GREATER_EQUAL=13;
-    public final static int EQUAL=14;
-    public final static int LESS_EQUAL=15;
-    public final static int LESS=16;
-    public final static int GREATER=17;
-    public final static int LIKE=18;
-    public final static int UNION=19;
-    public final static int JOIN=20;
-    public final static int VARIABLE=21;
-    public final static int CONSTANT_STRING=22;
-    public final static int CONSTANT_NUMBER=23;
+    public final static int IN=10;
+    public final static int AND=11;
+    public final static int OR=12;
+    public final static int NOT=13;
+    public final static int GREATER_EQUAL=14;
+    public final static int EQUAL=15;
+    public final static int LESS_EQUAL=16;
+    public final static int LESS=17;
+    public final static int GREATER=18;
+    public final static int LIKE=19;
+    public final static int UNION=20;
+    public final static int JOIN=21;
+    public final static int VARIABLE=22;
+    public final static int CONSTANT_STRING=23;
+    public final static int CONSTANT_NUMBER=24;
     
-    public final static int UNIDENTIFIED=24;
-    public final static int KEYWORDS=9;
+    public final static int UNIDENTIFIED=25;
+    public final static int KEYWORDS=10;
     public final static int BOOLEANS=12;
     public final static int LOGIC_OPERATORS=18;
     public final static int SET_OPERATOR=20;
@@ -116,6 +118,9 @@ public class Parser {
                 case WHERE:
                     state="WHERE";
                     break;
+                case IN :
+                    state="IN";
+                    break;
                 case AND:
                     state="AND";
                     break;
@@ -144,6 +149,7 @@ public class Parser {
                 else if (tempChar=='f' || tempChar=='F') flag =FROM;
                 else if (tempChar=='u' || tempChar=='U') flag =UNION;
                 else if (tempChar=='l' || tempChar=='L') flag =LIKE;
+                else if (tempChar=='i' || tempChar=='I') flag=IN;
                 else if (tempChar=='\"') flag = CONSTANT_STRING;
                 else if (tempChar>=48 && tempChar<=57) flag=CONSTANT_NUMBER;
                 else if (tempChar=='>' || tempChar=='<') flag=EQUAL;
