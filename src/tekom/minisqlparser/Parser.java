@@ -401,7 +401,7 @@ public class Parser {
     }
     public static boolean isValid(ArrayList<Integer> i){
         Stack<Integer> stack = new Stack();
-        final int S=-93,Z=-94,A=-95,B=-96,C=-97,D=-98;
+        final int S=-93,Z=-94,A=-95,B=-96,C=-97,D=-98,E=-100;
         int temp;
         int a=0;
         stack.push(-99);
@@ -454,13 +454,13 @@ public class Parser {
                         if (i.get(a+1)==COMMA){
                             stack.push(B);
                             stack.push(COMMA);
-                        }
+                        } /*
                         else if (i.get(a+1)==PERIOD){
                             stack.push(B);
                             stack.push(COMMA);
                             stack.push(VARIABLE);
                             stack.push(PERIOD);
-                        }
+                        } */
                         else if (i.get(a+1)==CONSTANT_STRING){
                             stack.push(B);
                             if (i.get(a+2)==COMMA){
@@ -468,7 +468,7 @@ public class Parser {
                             }
                             stack.push(CONSTANT_STRING);
                         }
-                        stack.push(VARIABLE);
+                        stack.push(E);
                     }
                     else if (i.get(a)==CONSTANT_STRING){
                         stack.push(B);
@@ -487,13 +487,29 @@ public class Parser {
                         if (i.get(a+2)==CONSTANT_STRING){
                             stack.push(CONSTANT_STRING);
                             stack.push(EQUAL);
+                            stack.push(E);
+                            break;
                         }
-                        else if (i.get(a+1)==CONSTANT_NUMBER){
+                        else if (i.get(a)==CONSTANT_STRING){
+                            stack.push(E);
+                            stack.push(EQUAL);
+                            stack.push(CONSTANT_STRING);
+                            break;
+                        }
+                        else if (i.get(a+2)==CONSTANT_NUMBER){
                             stack.push(CONSTANT_NUMBER);
                             stack.push(i.get(a+1));
+                            stack.push(E);
+                            break;
+                        }
+                        else if (i.get(a)==CONSTANT_NUMBER){
+                            stack.push(E);
+                            stack.push(i.get(a+1));
+                            stack.push(CONSTANT_NUMBER);
+                            break;
                         }
                         else {
-                            stack.push(VARIABLE);
+                            stack.push(E);
                             stack.push(i.get(a+1));
                         }
                     }
@@ -514,7 +530,7 @@ public class Parser {
                         stack.push(IN);
                         stack.push(NOT);
                     }
-                    stack.push(VARIABLE);
+                    stack.push(E);
                     break;
                 case D:
                     if (i.get(a)==AND){
@@ -529,6 +545,13 @@ public class Parser {
                         stack.push(Z);
                         stack.push(UNION);
                     }
+                    break;
+                case E:
+                    if (i.get(a+1)==PERIOD) {
+                        stack.push(VARIABLE);
+                        stack.push(PERIOD);
+                    }
+                    stack.push(VARIABLE);
                     break;
                 default:
                     if (temp==i.get(a) && temp!=UNIDENTIFIED) a++;
