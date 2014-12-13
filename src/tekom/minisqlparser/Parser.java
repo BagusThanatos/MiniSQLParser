@@ -6,6 +6,7 @@
 package tekom.minisqlparser;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Stack;
 import java.util.StringTokenizer;
 /**
@@ -237,7 +238,8 @@ public class Parser {
             else {
                 if ((tempChar+"").matches("^[*,.<>=();\" ]")) {
                     if (temp.toUpperCase().equals(state)){
-                        result.add(new TokenLexic(flag, "", temp));   
+                        result.add(new TokenLexic(flag, "", temp));
+                        if (!(tempChar+"").equals(" ")) result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(sql.charAt(i)+"")), "", sql.charAt(i)+""));
                     }
                     else {
                         result.add(new TokenLexic(VARIABLE, "Variable", temp));
@@ -401,12 +403,139 @@ public class Parser {
     }
     public static boolean isValid(ArrayList<Integer> i){
         Stack<Integer> stack = new Stack();
-        State s= s1;
-        for (Integer i_ : i) {
-            s=s.getNextStates(i_, NextState.emptyString);
-            if (s==null) return false;
+        final int S=-93,Z=-94,A=-95,B=-96,C=-97,D=-98;
+        int temp;
+        int a=0;
+        stack.push(-99);
+        stack.push(S);
+        boolean valid=true;
+        if (i.size()<5) valid=false;
+        while (valid && a<i.size()){
+            temp=stack.pop();
+            switch (temp) {
+                case S:
+                    stack.push(SEMICOLON);
+                    stack.push(Z);
+                    break;
+                case Z:
+                    if (i.get(a)==SELECT && i.get(a+1)==STAR){
+                        stack.push(A);
+                        stack.push(4);
+                        stack.push(2);
+                        stack.push(1);
+                    } else if (i.get(a)==SELECT) {
+                        stack.push(A);
+                        stack.push(FROM);
+                        stack.push(B);
+                        stack.push(SELECT);
+                    }
+                    else valid=false;
+                    break;
+                case A:
+                    if (i.get(a)==VARIABLE){
+                        if (i.get(a+1)==COMMA){
+                            stack.push(A);
+                            stack.push(COMMA);
+                        }
+                        else if (i.get(a+1)==JOIN){
+                            stack.push(A);
+                            stack.push(JOIN);
+                        }
+                        else if (i.get(a+1)==WHERE){
+                            stack.push(C);
+                            stack.push(WHERE);
+                        }
+                        stack.push(VARIABLE);
+                    }
+                    break;
+                case B:
+                    if (i.get(a)==VARIABLE){
+                        if (i.get(a+1)==COMMA){
+                            stack.push(B);
+                            stack.push(COMMA);
+                        }
+                        else if (i.get(a+1)==PERIOD){
+                            stack.push(B);
+                            stack.push(COMMA);
+                            stack.push(VARIABLE);
+                            stack.push(PERIOD);
+                        }
+                        else if (i.get(a+1)==CONSTANT_STRING){
+                            stack.push(B);
+                            if (i.get(a+2)==COMMA){
+                                stack.push(COMMA);
+                            }
+                            stack.push(CONSTANT_STRING);
+                        }
+                        stack.push(VARIABLE);
+                    }
+                    else if (i.get(a)==CONSTANT_STRING){
+                        stack.push(B);
+                        if (i.get(a+1)==COMMA) stack.push(COMMA);
+                        stack.push(CONSTANT_STRING);
+                    }
+                    else if (i.get(a)==CONSTANT_NUMBER){
+                        stack.push(B);
+                        if (i.get(a+1)==COMMA) stack.push(COMMA);
+                        stack.push(CONSTANT_NUMBER);
+                    }
+                    break;
+                case C:
+                    stack.push(D);
+                    if (i.get(a+1)>=GREATER_EQUAL && i.get(a+1)<=GREATER){
+                        if (i.get(a+2)==CONSTANT_STRING){
+                            stack.push(CONSTANT_STRING);
+                            stack.push(EQUAL);
+                        }
+                        else if (i.get(a+1)==CONSTANT_NUMBER){
+                            stack.push(CONSTANT_NUMBER);
+                            stack.push(i.get(a+1));
+                        }
+                        else {
+                            stack.push(VARIABLE);
+                            stack.push(i.get(a+1));
+                        }
+                    }
+                    else if (i.get(a+1)==LIKE){
+                        stack.push(CONSTANT_STRING);
+                        stack.push(LIKE);
+                    }
+                    else if (i.get(a+1)==IN){
+                        stack.push(KURTUP);
+                        stack.push(Z);
+                        stack.push(KURKA);
+                        stack.push(IN);
+                    }
+                    else {
+                        stack.push(KURTUP);
+                        stack.push(Z);
+                        stack.push(KURKA);
+                        stack.push(IN);
+                        stack.push(NOT);
+                    }
+                    stack.push(VARIABLE);
+                    break;
+                case D:
+                    if (i.get(a)==AND){
+                        stack.push(C);
+                        stack.push(AND);
+                    }
+                    else if (i.get(a)==OR){
+                        stack.push(C);
+                        stack.push(OR);
+                    }
+                    else {
+                        stack.push(Z);
+                        stack.push(UNION);
+                    }
+                    break;
+                default:
+                    if (temp==i.get(a) && temp!=UNIDENTIFIED) a++;
+                    else valid=false;
+            }
         }
-        return s.getStatus()==true && stack.isEmpty();
+        if (stack.peek()==-99) stack.pop();
+        return valid && stack.isEmpty();
     }
     public static ArrayList<Integer> toArrayInt(ArrayList<TokenLexic> t){
         ArrayList<Integer> result= new ArrayList();

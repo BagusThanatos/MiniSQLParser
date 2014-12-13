@@ -5,6 +5,7 @@
  */
 package tekom.minisqlparser;
 
+import java.awt.Color;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
@@ -78,8 +79,6 @@ public class Main extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(tableMain);
-
-        labelResult.setText("TIDAK VALID");
 
         jMenu1.setText("File");
 
@@ -187,7 +186,7 @@ public class Main extends javax.swing.JFrame {
     }
     private void setTable(String s,boolean isLexicalCode){
         if (s.isEmpty()) return;
-        boolean valid= false;
+        boolean valid;
         removeTableValues();
         DefaultTableModel d = (DefaultTableModel) this.tableMain.getModel();
         if (!isLexicalCode){
@@ -204,8 +203,14 @@ public class Main extends javax.swing.JFrame {
             });
             valid = Parser.isValid(a);
         }
-        if (valid) this.labelResult.setText("VALID");
-        else this.labelResult.setText("TIDAK VALID");
+        if (valid) {
+            this.labelResult.setText("VALID");
+            this.labelResult.setBackground(Color.green);
+        }
+        else {
+            this.labelResult.setText("TIDAK VALID");
+            this.labelResult.setBackground(Color.red);
+        }
     }
     /**
      * @param args the command line arguments
