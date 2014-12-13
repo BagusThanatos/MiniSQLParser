@@ -399,7 +399,7 @@ public class Parser {
         */
         return result;
     }
-    public static boolean isValid(ArrayList<Integer> i){
+    public static boolean isValid(ArrayList<Integer> i) throws Exception{
         Stack<Integer> stack = new Stack();
         final int S=-93,Z=-94,A=-95,B=-96,C=-97,D=-98,E=-100;
         int temp;
@@ -558,7 +558,7 @@ public class Parser {
                     else valid=false;
             }
         }
-        if (stack.peek()==-99) stack.pop();
+        if (stack.peek()== -99) stack.pop();
         return valid && stack.isEmpty();
     }
     public static ArrayList<Integer> toArrayInt(ArrayList<TokenLexic> t){

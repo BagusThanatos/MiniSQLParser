@@ -8,6 +8,8 @@ package tekom.minisqlparser;
 import java.awt.Color;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -194,14 +196,24 @@ public class Main extends javax.swing.JFrame {
             r.stream().forEach((r_) -> { 
                 d.addRow(new String[]{r_.getValue()+"",r_.getName(),r_.getTokenCode()+""});
             });   
-            valid = Parser.isValid(Parser.toArrayInt(r));
+            try {
+                valid = Parser.isValid(Parser.toArrayInt(r));
+            } catch (Exception ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                valid = false;
+            }
         }
         else {
             ArrayList<Integer> a = Parser.parseLexical(s);
             a.stream().forEach((Integer a_) ->{
                 d.addRow(new String[]{"","",a_.toString()});
             });
-            valid = Parser.isValid(a);
+            try {
+                valid = Parser.isValid(a);
+            } catch (Exception ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                valid=false;
+            }
         }
         if (valid) {
             this.labelResult.setText("VALID");
