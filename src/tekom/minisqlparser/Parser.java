@@ -169,7 +169,6 @@ public class Parser {
                 }
                 else if (temp.equals(">")) result.add(new TokenLexic(GREATER_EQUAL, "", ">="));
                 else if (temp.equals("<")) result.add(new TokenLexic(LESS_EQUAL, "", "<="));
-                System.out.println(temp+tempChar);
                 temp="";
                 flag=START;
             }
@@ -239,7 +238,7 @@ public class Parser {
                 if ((tempChar+"").matches("^[*,.<>=();\" ]")) {
                     if (temp.toUpperCase().equals(state)){
                         result.add(new TokenLexic(flag, "", temp));
-                        if (!(tempChar+"").equals(" ")) result.add(new TokenLexic(lexicalCode.get(lexicalName.indexOf(sql.charAt(i)+"")), "", sql.charAt(i)+""));
+                        i--;
                     }
                     else {
                         result.add(new TokenLexic(VARIABLE, "Variable", temp));
@@ -265,7 +264,6 @@ public class Parser {
                     temp+=tempChar;
                 }
             }
-            if (temp.equals("<")) System.out.println(flag);
         }
         if (!temp.isEmpty()) result.add(new TokenLexic(flag, "", temp));
         return result;
@@ -420,9 +418,9 @@ public class Parser {
                 case Z:
                     if (i.get(a)==SELECT && i.get(a+1)==STAR){
                         stack.push(A);
-                        stack.push(4);
-                        stack.push(2);
-                        stack.push(1);
+                        stack.push(FROM);
+                        stack.push(STAR);
+                        stack.push(SELECT);
                     } else if (i.get(a)==SELECT) {
                         stack.push(A);
                         stack.push(FROM);
@@ -432,21 +430,24 @@ public class Parser {
                     else valid=false;
                     break;
                 case A:
-                    if (i.get(a)==VARIABLE){
-                        if (i.get(a+1)==COMMA){
-                            stack.push(A);
-                            stack.push(COMMA);
-                        }
-                        else if (i.get(a+1)==JOIN){
-                            stack.push(A);
-                            stack.push(JOIN);
-                        }
-                        else if (i.get(a+1)==WHERE){
-                            stack.push(C);
-                            stack.push(WHERE);
-                        }
-                        stack.push(VARIABLE);
+                    if (i.get(a+1)==COMMA){
+                        stack.push(A);
+                        stack.push(COMMA);
                     }
+                    else if (i.get(a+1)==JOIN){
+                        stack.push(A);
+                        stack.push(JOIN);
+                    }
+                    else if (i.get(a+1)==WHERE){
+                        stack.push(C);
+                        stack.push(WHERE);
+                    }
+                    else if (i.get(a+1)==UNION){
+                        stack.push(Z);
+                        stack.push(UNION);
+                    }
+                    stack.push(VARIABLE);
+                    
                     break;
                 case B:
                     if (i.get(a)==VARIABLE){
@@ -524,7 +525,7 @@ public class Parser {
                         stack.push(C);
                         stack.push(OR);
                     }
-                    else {
+                    else if (i.get(a)==UNION){
                         stack.push(Z);
                         stack.push(UNION);
                     }
