@@ -6,7 +6,6 @@
 package tekom.minisqlparser;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Stack;
 import java.util.StringTokenizer;
 /**
@@ -74,25 +73,6 @@ public class Parser {
     public final static int BOOLEANS=12;
     public final static int LOGIC_OPERATORS=18;
     public final static int SET_OPERATOR=20;
-    
-    
-    //ini untuk melakukan pengecekan terhadap kebenaran suatu query
-    /*
-    private final static State s1= new State("q1", false);
-    private final static State s2= new State("q2", false);
-    private final static State s3= new State("q3", false);
-    private final static State s4= new State("q4", false);
-    private final static State s5= new State("q5", false);
-    private final static State s6= new State("q6", true);
-    static {
-        s1.insertNextState(s2, SELECT);
-        s2.insertNextState(s3, STAR);
-        s3.insertNextState(s4, FROM);
-        s4.insertNextState(s5, VARIABLE);
-        s5.insertNextState(s6, SEMICOLON);
-        
-    }
-    */
     
     public static ArrayList<TokenLexic> parseSQL(String sql){
         /*
@@ -272,6 +252,7 @@ public class Parser {
     public static ArrayList<TokenLexic> parseSQL2(String sql){
         /*
         memiliki fungsi yang sama dengan fungsi parseSQL, hanya saja menggunakan StringTokenizer
+        tidak digunakan, hanya saja tidak dihapus sebagai pembanding saja
         */
         boolean logical=false;
         boolean stringWithSpace=false;
@@ -401,6 +382,9 @@ public class Parser {
         return result;
     }
     public static boolean isValid(ArrayList<Integer> i) throws Exception{
+        /*
+        mengecek kevalidan sebuah query yang dimasukkan
+        */
         Stack<Integer> stack = new Stack();
         final int S=-93,Z=-94,A=-95,B=-96,C=-97,D=-98,fin=-99,E=-100;
         int temp;
@@ -463,7 +447,6 @@ public class Parser {
                             stack.push(PERIOD);
                         } */
                         else if (i.get(a+1)==CONSTANT_STRING){
-                            
                             if (i.get(a+2)==COMMA){
                                 stack.push(B);
                                 stack.push(COMMA);
@@ -478,15 +461,13 @@ public class Parser {
                         stack.push(E);
                     }
                     else if (i.get(a)==CONSTANT_STRING){
-                        
                         if (i.get(a+1)==COMMA) {
                             stack.push(B);
                             stack.push(COMMA);
                         }
                         stack.push(CONSTANT_STRING);
                     }
-                    else if (i.get(a)==CONSTANT_NUMBER){
-                        
+                    else if (i.get(a)==CONSTANT_NUMBER){ 
                         if (i.get(a+1)==COMMA) {
                             stack.push(B);
                             stack.push(COMMA);
