@@ -77,6 +77,7 @@ public class Parser {
     
     
     //ini untuk melakukan pengecekan terhadap kebenaran suatu query
+    /*
     private final static State s1= new State("q1", false);
     private final static State s2= new State("q2", false);
     private final static State s3= new State("q3", false);
@@ -91,7 +92,7 @@ public class Parser {
         s5.insertNextState(s6, SEMICOLON);
         
     }
-    
+    */
     
     public static ArrayList<TokenLexic> parseSQL(String sql){
         /*
@@ -401,15 +402,15 @@ public class Parser {
     }
     public static boolean isValid(ArrayList<Integer> i) throws Exception{
         Stack<Integer> stack = new Stack();
-        final int S=-93,Z=-94,A=-95,B=-96,C=-97,D=-98,E=-100;
+        final int S=-93,Z=-94,A=-95,B=-96,C=-97,D=-98,fin=-99,E=-100;
         int temp;
         int a=0;
-        stack.push(-99);
+        stack.push(fin);
         stack.push(S);
         boolean valid=true;
         if (i.size()<5) valid=false;
         while (valid && a<i.size()){
-            temp=stack.pop();
+            temp=stack.pop(); System.out.println(temp);
             switch (temp) {
                 case S:
                     stack.push(SEMICOLON);
@@ -451,7 +452,7 @@ public class Parser {
                     break;
                 case B:
                     if (i.get(a)==VARIABLE){
-                        if (i.get(a+1)==COMMA){
+                        if (i.get(a+1)==COMMA || i.get(a+3)==COMMA){
                             stack.push(B);
                             stack.push(COMMA);
                         } /*
@@ -462,29 +463,45 @@ public class Parser {
                             stack.push(PERIOD);
                         } */
                         else if (i.get(a+1)==CONSTANT_STRING){
-                            stack.push(B);
+                            
                             if (i.get(a+2)==COMMA){
+                                stack.push(B);
                                 stack.push(COMMA);
                             }
                             stack.push(CONSTANT_STRING);
                         }
+                        /*
+                        if (i.get(a+1)== PERIOD){
+                            stack.push(VARIABLE);
+                            stack.push(PERIOD);
+                        }*/
                         stack.push(E);
                     }
                     else if (i.get(a)==CONSTANT_STRING){
-                        stack.push(B);
-                        if (i.get(a+1)==COMMA) stack.push(COMMA);
+                        
+                        if (i.get(a+1)==COMMA) {
+                            stack.push(B);
+                            stack.push(COMMA);
+                        }
                         stack.push(CONSTANT_STRING);
                     }
                     else if (i.get(a)==CONSTANT_NUMBER){
-                        stack.push(B);
-                        if (i.get(a+1)==COMMA) stack.push(COMMA);
+                        
+                        if (i.get(a+1)==COMMA) {
+                            stack.push(B);
+                            stack.push(COMMA);
+                        }
                         stack.push(CONSTANT_NUMBER);
                     }
                     break;
                 case C:
                     stack.push(D);
-                    if (i.get(a+1)>=GREATER_EQUAL && i.get(a+1)<=GREATER){
-                        if (i.get(a+2)==CONSTANT_STRING){
+                    int offset=1;
+                    if (i.get(a+1)==PERIOD){
+                        offset=3;
+                    }
+                    if ((i.get(a+offset)>=GREATER_EQUAL && i.get(a+offset)<=GREATER) ){
+                        if (i.get(a+(offset+1))==CONSTANT_STRING){
                             stack.push(CONSTANT_STRING);
                             stack.push(EQUAL);
                             stack.push(E);
@@ -496,7 +513,7 @@ public class Parser {
                             stack.push(CONSTANT_STRING);
                             break;
                         }
-                        else if (i.get(a+2)==CONSTANT_NUMBER){
+                        else if (i.get(a+1+offset)==CONSTANT_NUMBER){
                             stack.push(CONSTANT_NUMBER);
                             stack.push(i.get(a+1));
                             stack.push(E);
@@ -510,14 +527,14 @@ public class Parser {
                         }
                         else {
                             stack.push(E);
-                            stack.push(i.get(a+1));
+                            if (i.get(a+offset) >= GREATER_EQUAL && i.get(a+offset)<= GREATER) stack.push(i.get(a+offset));
                         }
                     }
-                    else if (i.get(a+1)==LIKE){
+                    else if (i.get(a+offset)==LIKE){
                         stack.push(CONSTANT_STRING);
                         stack.push(LIKE);
                     }
-                    else if (i.get(a+1)==IN){
+                    else if (i.get(a+offset)==IN){
                         stack.push(KURTUP);
                         stack.push(Z);
                         stack.push(KURKA);
@@ -558,7 +575,7 @@ public class Parser {
                     else valid=false;
             }
         }
-        if (stack.peek()== -99) stack.pop();
+        if (stack.peek()== fin) stack.pop();
         return valid && stack.isEmpty();
     }
     public static ArrayList<Integer> toArrayInt(ArrayList<TokenLexic> t){
@@ -568,20 +585,6 @@ public class Parser {
         });
         return result;
     }
-    public static int nextSymbol(String sql){
-        /*
-        akan mengembalikan posisi spasi atau simbol terdekat,
-        akan mengembalikan nilai panjang string jika tidak ditemukan spasi atau simbol terdekat
-        */
-        int comma=!sql.contains(",")? 32000:sql.indexOf(","),period=!sql.contains(".")? 32000:sql.indexOf("."),
-                space=!sql.contains(" ")? 32000:sql.indexOf(" "),star=!sql.contains("*")? 32000:sql.indexOf("*");
-        
-        int min=comma;
-        min=Math.min(min, period);
-        min=Math.min(min, space);
-        min=Math.min(min, star);
-        System.out.println(min);
-        return min==32000? sql.length(): (min==0? 1: min);
-    }
+    
     
 }
